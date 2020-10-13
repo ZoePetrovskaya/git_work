@@ -8,7 +8,7 @@ import time
 
 #2. открытие ресурса
 driver = webdriver.Chrome() 
-driver.maximize_window()
+#driver.maximize_window()
 driver.get("http://practice.automationtesting.in")
 driver.implicitly_wait(20)
 wait = WebDriverWait(driver, 20) 
@@ -29,30 +29,41 @@ def logout(): #logout
 
 
 def basket_container(): #очистка корзины
-    basket = driver.find_element_by_id("wpmenucartli")
+    basket = driver.find_element_by_id("wpmenucartli") 
+    time.sleep(10)
     count_item = driver.find_element_by_css_selector("span.cartcontents")
     count_amount = driver.find_element_by_css_selector("span.amount")
+   
+    #count_item_text = count_item.text
     count_item_text = count_item.text
-    #print(count_item_text)
     count_amount_text = count_amount.text
+    print("В корзине", count_item_text)
     #print(count_amount_text)
-    count_item_text = count_item.text
+    #
     #print(count_item_text)
-    count_amount_text = count_amount.text
+    #count_amount_text = count_amount.text
     #print(count_amount_text)
     if count_item_text != "0 items":
         basket.click()
+        time.sleep(10)
         while count_item != "0 items":
             try:
                 del_item = driver.find_element_by_css_selector("td.product-remove > a").click()
             except:
+                time.sleep(10)
+                count_item = driver.find_element_by_css_selector("span.cartcontents")
+                count_item_text = count_item.text
+                print("В корзине", count_item_text)
                 break
+
+    #assert count_item_text == "0 items"
     Shop = driver.find_element_by_id("menu-item-40").click()
 
 
 #4.Shop: отображение страницы товара. shop >HTML5 Forms
 print("#4.Shop: отображение страницы товара. shop >HTML5 Forms")
 login()
+#basket_container()
 book_HTML_V = driver.find_element_by_xpath("//h3[text()='HTML5 Forms']").click()
 header_book = driver.find_element_by_css_selector(".product_title.entry-title")
 header_book_get_text = header_book.text
@@ -67,6 +78,7 @@ logout()
 #5. Shop: количество товаров в категории
 print("#5. Shop: количество товаров в категории")
 login()
+basket_container()
 category_HTML = driver.find_element_by_css_selector("li.cat-item.cat-item-19 > a").click()
 category_HTML_list = driver.find_elements(By.CLASS_NAME, "has-post-author")
 
@@ -79,6 +91,7 @@ logout()
 #6. Shop: сортировка товаров
 print("#6. Shop: сортировка товаров")
 login()
+#basket_container()
 def choice():
     if sort =="price-desc":
         print("Выбран вариант сортировки от большего к меньшему")
@@ -98,6 +111,7 @@ logout()
 #7. Shop: отображение, скидка товара
 print("#7. Shop: отображение, скидка товара") 
 login()
+basket_container()
 book_Android_Quick_Start_Guide = driver.find_element_by_xpath("//h3[text()='Android Quick Start Guide']").click()
 previous_price = driver.find_element_by_css_selector("div:nth-child(2) > p > del > span")
 previous_price_get_text = previous_price.text
@@ -123,9 +137,9 @@ img_cover = WebDriverWait(driver, 5).until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, ".wp-post-image")))
 cover_book = driver.find_element_by_class_name("wp-post-image").click()
  
-cower_book_wait = WebDriverWait(driver, 3).until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, ".pp_pic_holder.pp_woocommerce")))
-close_button_wait = WebDriverWait(driver, 5).until(EC.presence_of_element_located(
+cower_book_wait = WebDriverWait(driver, 1).until(EC.presence_of_element_located(
+            (By.ID, "fullResImage")))
+close_button_wait = WebDriverWait(driver, 2).until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, ".pp_details > a")))
 close_click = driver.find_element_by_css_selector(".pp_details > a").click()
 
@@ -134,9 +148,9 @@ logout()
 #9. Shop: проверка цены в корзине
 print("#9. Shop: проверка цены в корзине")
 login()
-time.sleep(20)
-basket_container()#очистка корзины
 
+basket_container()#очистка корзины
+time.sleep(20)
 book_HTML5_WebApp_Development = driver.find_element_by_xpath("//h3[text()='HTML5 WebApp Develpment']").click()
 add_book = driver.find_element_by_css_selector("div.summary.entry-summary > form > button").click()
 time.sleep(20)
@@ -177,8 +191,11 @@ driver.find_element_by_xpath("//a[text()='Undo?']").click()
 quantity = driver.find_element_by_css_selector("form > table > tbody > tr:nth-child(1) > td.product-quantity > div > input").clear()
 quantity = driver.find_element_by_css_selector("form > table > tbody > tr:nth-child(1) > td.product-quantity > div > input").send_keys(3)
 
+#time.sleep(40)
+UPDATE_BASKET_wait =  WebDriverWait(driver, 40).until(EC.element_to_be_clickable((By.NAME, "update_cart")))
 
-UPDATE_BASKET = driver.find_element_by_css_selector("tr:nth-child(3) > td > input.button").click()
+print("UPDATE_BASKET")
+UPDATE_BASKET = driver.find_element_by_name("update_cart").click()
 
 quantity_updated = driver.find_element_by_css_selector("form > table > tbody > tr:nth-child(1) > td.product-quantity > div > input")
 Value_quantity_updated = quantity_updated.get_attribute("value")
@@ -202,9 +219,10 @@ driver.get("http://practice.automationtesting.in")
 Shop = driver.find_element_by_id("menu-item-40").click()
 driver.execute_script("window.scrollBy(0,300);")
 add_book_HTML5_WebApp_Development = driver.find_element_by_css_selector('li.post-182>:nth-child(2)').click()
+basket_wait = WebDriverWait(driver, 50).until(EC.element_to_be_clickable((By.ID,"wpmenucartli")))
 basket = driver.find_element_by_id("wpmenucartli").click()
 
-checkout_wait = WebDriverWait(driver, 40).until(EC.element_to_be_clickable((By.CLASS_NAME,"wc-forward")))
+checkout_wait = WebDriverWait(driver, 50).until(EC.element_to_be_clickable((By.CLASS_NAME,"wc-forward")))
 checkout = driver.find_element_by_class_name("wc-forward").click()
 
 
@@ -245,6 +263,25 @@ place_order = driver.find_element_by_id("place_order").click()
 thanks = driver.find_element_by_class_name("woocommerce-thankyou-order-received")
 Thanks_wait = WebDriverWait(driver, 20).until(EC.text_to_be_present_in_element((By.CLASS_NAME,"woocommerce-thankyou-order-received"),"Thank you. Your order has been received."))
 Check_Payments_wait = WebDriverWait(driver, 20).until(EC.text_to_be_present_in_element((By.CSS_SELECTOR," li.method > strong"),"Check Payments"))
+
+# отсюда работаю с git
+print("# отсюда работаю с git")
+#12 branch shop7-home-page-with-three-sliders-only  
+
+print("#12. home-page-with-three-sliders-only")
+login()
+basket_container()#очистка корзины
+
+home = driver.find_element_by_xpath("//a[text()='Home']").click()
+three_sliders = driver.find_element_by_class_name("gutter-default.sub_row_1-0-2")
+each_slide = three_sliders. find_element_by_class_name("sub_column_post_22")
+new_arrivals = three_sliders.find_elements(By.CLASS_NAME, "sub_column_post_22")
+
+if len(new_arrivals) == 3:
+    print("В категории HTML три книги")
+else:
+    print("ops")
+#print("yes")
 
 driver.quit()
 
