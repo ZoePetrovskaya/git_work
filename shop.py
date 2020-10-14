@@ -268,7 +268,22 @@ Check_Payments_wait = WebDriverWait(driver, 20).until(EC.text_to_be_present_in_e
 print("# отсюда работаю с git")
 #12 branch shop7-home-page-with-three-sliders-only  
 
-print("#12. home-page-with-three-sliders-only")
+print("#12. Home page with three Arrivals only ")
+login()
+basket_container()#очистка корзины
+
+home = driver.find_element_by_xpath("//a[text()='Home']").click()
+three_sliders = driver.find_elements(By.CLASS_NAME,"n2-ss-slide-background-image.n2-ss-slide-fill.n2-ow")
+#each_slide = three_sliders. find_element_by_class_name("sub_column_post_22")
+#new_arrivals = three_sliders.find_elements(By.CLASS_NAME, "sub_column_post_22")
+
+if len(three_sliders) == 3:
+    print("the Home page has Three Sliders")
+else:
+    print("ops")
+#print("yes")
+logout()
+#13 branch shop8 2.Home page with three Arrivals only  
 login()
 basket_container()#очистка корзины
 
@@ -278,11 +293,14 @@ each_slide = three_sliders. find_element_by_class_name("sub_column_post_22")
 new_arrivals = three_sliders.find_elements(By.CLASS_NAME, "sub_column_post_22")
 
 if len(new_arrivals) == 3:
-    print("В категории HTML три книги")
+    print("the Home page has Three Arrivals")
 else:
     print("ops")
-#print("yes")
 
+logout()
+
+
+print("yes")
 driver.quit()
 
 
