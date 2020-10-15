@@ -268,14 +268,12 @@ Check_Payments_wait = WebDriverWait(driver, 20).until(EC.text_to_be_present_in_e
 print("# отсюда работаю с git")
 #12 branch shop7-home-page-with-three-sliders-only  
 
-print("#12. Home page with three Arrivals only ")
+print("#12. the Home page has Three Sliders ")
 login()
 basket_container()#очистка корзины
 
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
 three_sliders = driver.find_elements(By.CLASS_NAME,"n2-ss-slide-background-image.n2-ss-slide-fill.n2-ow")
-#each_slide = three_sliders. find_element_by_class_name("sub_column_post_22")
-#new_arrivals = three_sliders.find_elements(By.CLASS_NAME, "sub_column_post_22")
 
 if len(three_sliders) == 3:
     print("the Home page has Three Sliders")
@@ -283,15 +281,14 @@ else:
     print("ops")
 #print("yes")
 logout()
+
 #13 branch shop8 2.Home page with three Arrivals only  
+print("#13. Home page with three Arrivals only ")
 login()
 basket_container()#очистка корзины
 
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
-three_sliders = driver.find_element_by_class_name("gutter-default.sub_row_1-0-2")
-each_slide = three_sliders. find_element_by_class_name("sub_column_post_22")
-new_arrivals = three_sliders.find_elements(By.CLASS_NAME, "sub_column_post_22")
-
+new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
 if len(new_arrivals) == 3:
     print("the Home page has Three Arrivals")
 else:
@@ -300,7 +297,25 @@ else:
 logout()
 
 
-print("yes")
+#14 branch shop9 3.Home page - Images in Arrivals should navigate 
+print("#14. Images in Arrivals should navigate ")
+login()
+basket_container()#очистка корзины
+home = driver.find_element_by_xpath("//a[text()='Home']").click()
+new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
+if len(new_arrivals) == 3:
+    print("the Home page has Three Arrivals")
+else:
+    print("ops")
+
+each_arrivel = driver. find_element_by_xpath("//img[@alt='Selenium Ruby']").click()
+add_button_is_here = driver.find_element_by_class_name("single_add_to_cart_button")
+add_button_is_here_wait = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.CLASS_NAME,"single_add_to_cart_button")))
+assert add_button_is_here!= None, "'Add book' is not clickable"
+print("The image in the Arrivals is navigating to next page where the user can add that book into his basket")
+
+
+#print("yes")
 driver.quit()
 
 
