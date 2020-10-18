@@ -314,8 +314,32 @@ add_button_is_here_wait = WebDriverWait(driver,20).until(EC.element_to_be_clicka
 assert add_button_is_here!= None, "'Add book' is not clickable"
 print("The image in the Arrivals is navigating to next page where the user can add that book into his basket")
 
+logout()
 
-#print("yes")
+
+#15 branch shop10 4. Home page - Arrivals-Images-Description  
+print("#15. Home page - Arrivals-Images-Description")
+login()
+basket_container()#очистка корзины
+home = driver.find_element_by_xpath("//a[text()='Home']").click()
+new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
+if len(new_arrivals) == 3:
+    print("the Home page has Three Arrivals")
+else:
+    print("ops")
+
+each_arrivel = driver. find_element_by_xpath("//img[@alt='Selenium Ruby']").click()
+add_button_is_here = driver.find_element_by_class_name("single_add_to_cart_button")
+add_button_is_here_wait = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.CLASS_NAME,"single_add_to_cart_button")))
+assert add_button_is_here!= None, "'Add book' is not clickable"
+print("The image in the Arrivals is navigating to next page where the user can add that book into his basket")
+
+description = driver.find_element_by_css_selector("li.description_tab>a").click()
+description_text= driver.find_element_by_id("tab-description")
+assert description_text
+print("There should be a description regarding that book the user clicked on")
+logout()
+print("yes")
 driver.quit()
 
 
