@@ -340,7 +340,7 @@ print("There should be a description regarding that book the user clicked on")
 logout()
 
 #16 branch shop11  Home page - Arrivals-Images-Reviews
-print("#16. 5. Home page - Arrivals-Images-Reviews")
+print("#16.  Home page - Arrivals-Images-Reviews")
 login()
 basket_container()#очистка корзины
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
@@ -359,6 +359,30 @@ reviews_tab = driver.find_element_by_class_name("reviews_tab").click()
 reviews = driver.find_element_by_class_name("woocommerce-Reviews-title")
 assert reviews != None
 print("There is a Reviews here")
+logout()
+
+#17 branch shop12 Home page - Arrivals-Images-Add to Basket             
+print("#17.Home page - Arrivals-Images-Add to Basket  ")
+login()
+basket_container()#очистка корзины
+home = driver.find_element_by_xpath("//a[text()='Home']").click()
+new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
+if len(new_arrivals) == 3:
+    print("the Home page has Three Arrivals")
+else:
+    print("ops")
+
+each_arrivel = driver. find_element_by_xpath("//img[@alt='Selenium Ruby']").click()
+add_button_is_here = driver.find_element_by_class_name("single_add_to_cart_button")
+add_button_is_here_wait = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.CLASS_NAME,"single_add_to_cart_button")))
+assert add_button_is_here!= None, "'Add book' is not clickable"
+print("The image in the Arrivals is navigating to next page where the user can add that book into his basket")
+Add_to_basket = driver.find_element_by_class_name("single_add_to_cart_button.button.alt").click()
+
+count_item = driver.find_element_by_css_selector("span.cartcontents")
+count_item_text = count_item.text
+assert count_item_text != "0 items"
+print("Your item was added")
 logout()
 
 
