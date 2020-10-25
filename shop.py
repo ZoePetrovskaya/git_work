@@ -6,6 +6,11 @@ from selenium import webdriver
 from selenium.webdriver.support.select import Select  
 import time 
 
+#тестирую api
+import requests
+import urllib3
+
+
 #2. открытие ресурса
 driver = webdriver.Chrome() 
 #driver.maximize_window()
@@ -27,42 +32,46 @@ def logout(): #logout
     my_account = driver.find_element_by_id("menu-item-50").click()
     logout = driver.find_element_by_xpath("//a[text()='Logout']").click()
 
-
-def basket_container(): #очистка корзины
+def basket_container(): # содержимое корзины
     basket = driver.find_element_by_id("wpmenucartli") 
     time.sleep(10)
     count_item = driver.find_element_by_css_selector("span.cartcontents")
     count_amount = driver.find_element_by_css_selector("span.amount")
    
-    #count_item_text = count_item.text
     count_item_text = count_item.text
     count_amount_text = count_amount.text
+
     print("В корзине", count_item_text)
-    #print(count_amount_text)
-    #
-    #print(count_item_text)
-    #count_amount_text = count_amount.text
-    #print(count_amount_text)
-    if count_item_text != "0 items":
+    
+    return count_item_text, basket 
+
+def basket_container_clean(): #очистка корзины 
+    
+    count_item_text, basket = basket_container()
+    
+    if count_item_text != "0 Items":
+        print("Необходимо очистить корзину")
         basket.click()
         time.sleep(10)
-        while count_item != "0 items":
+        count_item_text = driver.find_element_by_css_selector("span.cartcontents").text
+        
+        while count_item_text != "0 Items":
             try:
-                del_item = driver.find_element_by_css_selector("td.product-remove > a").click()
+                driver.find_element_by_css_selector("td.product-remove > a").click() # удаляем item с помощью метода click
+                count_item_text = basket_container() # снова проверяем значение items в корзине
             except:
                 time.sleep(10)
                 count_item = driver.find_element_by_css_selector("span.cartcontents")
                 count_item_text = count_item.text
-                print("В корзине", count_item_text)
                 break
-
-    #assert count_item_text == "0 items"
+               
     Shop = driver.find_element_by_id("menu-item-40").click()
+
 
 #4.Shop: отображение страницы товара. shop >HTML5 Forms
 print("#4.Shop: отображение страницы товара. shop >HTML5 Forms")
 login()
-#basket_container()
+#basket_container_clean()
 book_HTML_V = driver.find_element_by_xpath("//h3[text()='HTML5 Forms']").click()
 header_book = driver.find_element_by_css_selector(".product_title.entry-title")
 header_book_get_text = header_book.text
@@ -77,7 +86,7 @@ logout()
 #5. Shop: количество товаров в категории
 print("#5. Shop: количество товаров в категории")
 login()
-basket_container()
+basket_container_clean()
 category_HTML = driver.find_element_by_css_selector("li.cat-item.cat-item-19 > a").click()
 category_HTML_list = driver.find_elements(By.CLASS_NAME, "has-post-author")
 
@@ -90,7 +99,7 @@ logout()
 #6. Shop: сортировка товаров
 print("#6. Shop: сортировка товаров")
 login()
-#basket_container()
+#basket_container_clean()
 def choice():
     if sort =="price-desc":
         print("Выбран вариант сортировки от большего к меньшему")
@@ -110,7 +119,7 @@ logout()
 #7. Shop: отображение, скидка товара
 print("#7. Shop: отображение, скидка товара") 
 login()
-basket_container()
+basket_container_clean()
 book_Android_Quick_Start_Guide = driver.find_element_by_xpath("//h3[text()='Android Quick Start Guide']").click()
 previous_price = driver.find_element_by_css_selector("div:nth-child(2) > p > del > span")
 previous_price_get_text = previous_price.text
@@ -148,7 +157,7 @@ logout()
 print("#9. Shop: проверка цены в корзине")
 login()
 
-basket_container()#очистка корзины
+basket_container_clean()#очистка корзины
 time.sleep(20)
 book_HTML5_WebApp_Development = driver.find_element_by_xpath("//h3[text()='HTML5 WebApp Develpment']").click()
 add_book = driver.find_element_by_css_selector("div.summary.entry-summary > form > button").click()
@@ -175,7 +184,7 @@ logout()
 #10. Shop: работа в корзине
 print("#10. Shop: работа в корзине")
 login()
-basket_container()#очистка корзины
+basket_container_clean()#очистка корзины
 
 driver.execute_script("window.scrollBy(0,300);")
 
@@ -269,7 +278,7 @@ print("# отсюда работаю с git")
 
 print("#12. the Home page has Three Sliders ")
 login()
-basket_container()#очистка корзины
+basket_container_clean()#очистка корзины
 
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
 three_sliders = driver.find_elements(By.CLASS_NAME,"n2-ss-slide-background-image.n2-ss-slide-fill.n2-ow")
@@ -284,7 +293,7 @@ logout()
 #13 branch shop8 2.Home page with three Arrivals only  
 print("#13. Home page with three Arrivals only ")
 login()
-basket_container()#очистка корзины
+basket_container_clean()#очистка корзины
 
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
 new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
@@ -299,7 +308,7 @@ logout()
 #14 branch shop9 3.Home page - Images in Arrivals should navigate 
 print("#14. Images in Arrivals should navigate ")
 login()
-basket_container()#очистка корзины
+basket_container_clean()#очистка корзины
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
 new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
 if len(new_arrivals) == 3:
@@ -319,7 +328,7 @@ logout()
 #15 branch shop10 4. Home page - Arrivals-Images-Description  
 print("#15. Home page - Arrivals-Images-Description")
 login()
-basket_container()#очистка корзины
+basket_container_clean()#очистка корзины
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
 new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
 if len(new_arrivals) == 3:
@@ -342,7 +351,7 @@ logout()
 #16 branch shop11  Home page - Arrivals-Images-Reviews
 print("#16.  Home page - Arrivals-Images-Reviews")
 login()
-basket_container()#очистка корзины
+basket_container_clean()#очистка корзины
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
 new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
 if len(new_arrivals) == 3:
@@ -364,7 +373,7 @@ logout()
 #17 branch shop12 Home page - Arrivals-Images-Add to Basket             
 print("#17.Home page - Arrivals-Images-Add to Basket  ")
 login()
-basket_container()#очистка корзины
+basket_container_clean()#очистка корзины
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
 new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
 if len(new_arrivals) == 3:
@@ -385,7 +394,51 @@ assert count_item_text != "0 items"
 print("Your item was added")
 logout()
 
+#пример тестирования запроса API
+print("#пример тестирования запроса API")
 
+http = urllib3.PoolManager()
+r = http.request('GET', 'http://practice.automationtesting.in/product/html5-forms/')
+print("Дата запроса:" , r.headers['Date'])
+print("Код ответа:", r.status)
+
+#18 branch shop13 Home page - Arrivals-Add to Basket with more books   
+print("#17.Home page - Arrivals-Add to Basket with more books  ")
+login()
+basket_container_clean()#очистка корзины
+home = driver.find_element_by_xpath("//a[text()='Home']").click()
+new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
+if len(new_arrivals) == 3:
+    print("the Home page has Three Arrivals")
+else:
+    print("ops")
+
+each_arrivel = driver. find_element_by_xpath("//img[@alt='Selenium Ruby']").click()
+add_button_is_here = driver.find_element_by_class_name("single_add_to_cart_button")
+add_button_is_here_wait = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.CLASS_NAME,"single_add_to_cart_button")))
+assert add_button_is_here!= None, "'Add book' is not clickable"
+print("The image in the Arrivals is navigating to next page where the user can add that book into his basket")
+Add_to_basket = driver.find_element_by_class_name("single_add_to_cart_button.button.alt").click()
+
+count_item_text = basket_container()
+assert count_item_text != "0 Items"
+
+in_stock = driver.find_element_by_class_name("in-stock").text
+#print(in_stock) #сообщение о максимальном количестве книг для заказа 
+in_stock_split = in_stock.split(" ")
+in_stock_count = int(in_stock_split[0])+1
+print("Значение превышающее допустимое",in_stock_count)
+
+counter_add_book = driver.find_element_by_class_name("input-text.qty.text")
+counter_add_book.clear()
+counter_add_book_chenge = driver.find_element_by_class_name("input-text.qty.text").send_keys(in_stock_count)
+
+validationMessage = counter_add_book.get_attribute("validationMessage");
+assert validationMessage == "Значение должно быть меньше или равно 494."
+
+
+print("Предупреждение",validationMessage)
+print("Успешно")
 driver.quit()
 
 
