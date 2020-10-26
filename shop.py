@@ -68,7 +68,7 @@ def basket_container_clean(): #очистка корзины
     Shop = driver.find_element_by_id("menu-item-40").click()
 
 
-#4.Shop: отображение страницы товара. shop >HTML5 Forms
+#4.Shop: отображение страницы товара. shop >HTML5 Forms'''
 print("#4.Shop: отображение страницы товара. shop >HTML5 Forms")
 login()
 #basket_container_clean()
@@ -403,7 +403,7 @@ print("Дата запроса:" , r.headers['Date'])
 print("Код ответа:", r.status)
 
 #18 branch shop13 Home page - Arrivals-Add to Basket with more books   
-print("#17.Home page - Arrivals-Add to Basket with more books  ")
+print("#18.Home page - Arrivals-Add to Basket with more books  ")
 login()
 basket_container_clean()#очистка корзины
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
@@ -438,6 +438,38 @@ assert validationMessage == "Значение должно быть меньше
 
 
 print("Предупреждение",validationMessage)
+logout()
+
+#19 branch shop14 Home-Arrivals-Add to Basket-Items-Coupon '''             
+print("#19. Home-Arrivals-Add to Basket-Items-Coupon   ")
+login()
+basket_container_clean()#очистка корзины
+home = driver.find_element_by_xpath("//a[text()='Home']").click()
+new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
+if len(new_arrivals) == 3:
+    print("the Home page has Three Arrivals")
+else:
+    print("ops")
+
+each_arrivel = driver. find_element_by_xpath("//img[@alt='Selenium Ruby']").click()
+add_button_is_here = driver.find_element_by_class_name("single_add_to_cart_button")
+add_button_is_here_wait = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.CLASS_NAME,"single_add_to_cart_button")))
+assert add_button_is_here!= None, "'Add book' is not clickable"
+print("The image in the Arrivals is navigating to next page where the user can add that book into his basket")
+Add_to_basket = driver.find_element_by_class_name("single_add_to_cart_button.button.alt").click()
+
+count_item_text = basket_container()
+assert count_item_text != "0 Items"
+basket = driver.find_element_by_id("wpmenucartli").click()
+coupon_input = driver.find_element_by_id("coupon_code").send_keys('krishnasakinala')
+
+coupon_apply = driver.find_element_by_name("apply_coupon").click()
+
+coupon_admit = driver.find_element_by_class_name("coupon-krishnasakinala")
+coupon_admit_text = coupon_admit.find_element_by_xpath("//td[@data-title='Coupon: krishnasakinala']").text
+print("Применена скидка", coupon_admit_text)
+assert coupon_admit_text == "-₹50.00, Free shipping coupon [Remove]"
+logout()
 print("Успешно")
 driver.quit()
 
