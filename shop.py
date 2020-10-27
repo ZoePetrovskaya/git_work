@@ -440,7 +440,7 @@ assert validationMessage == "Значение должно быть меньше
 print("Предупреждение",validationMessage)
 logout()
 
-#19 branch shop14 Home-Arrivals-Add to Basket-Items-Coupon '''             
+#19 branch shop14 Home-Arrivals-Add to Basket-Items-Coupon             
 print("#19. Home-Arrivals-Add to Basket-Items-Coupon   ")
 login()
 basket_container_clean()#очистка корзины
@@ -470,6 +470,40 @@ coupon_admit_text = coupon_admit.find_element_by_xpath("//td[@data-title='Coupon
 print("Применена скидка", coupon_admit_text)
 assert coupon_admit_text == "-₹50.00, Free shipping coupon [Remove]"
 logout()
+
+ 
+#20 branch shop15  Home-Arrivals-Add to Basket-Items-Coupon value<450 '''                  
+print("#20. Home-Arrivals-Add to Basket-Items-Coupon value<450 : добавть книгу, стоимость которой меньше 450р.  ")
+login()
+basket_container_clean()#очистка корзины
+home = driver.find_element_by_xpath("//a[text()='Home']").click()
+new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
+if len(new_arrivals) == 3:
+    print("the Home page has Three Arrivals")
+else:
+    print("ops")
+
+each_arrivel = driver. find_element_by_xpath("//img[@alt='Mastering JavaScript']").click()
+add_button_is_here = driver.find_element_by_class_name("single_add_to_cart_button")
+add_button_is_here_wait = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.CLASS_NAME,"single_add_to_cart_button")))
+assert add_button_is_here!= None, "'Add book' is not clickable"
+
+print("The image in the Arrivals is navigating to next page where the user can add that book into his basket")
+Add_to_basket = driver.find_element_by_class_name("single_add_to_cart_button.button.alt").click()
+
+count_item_text = basket_container()
+assert count_item_text != "0 Items"
+basket = driver.find_element_by_id("wpmenucartli").click()
+coupon_input = driver.find_element_by_id("coupon_code").send_keys('krishnasakinala')
+
+coupon_apply = driver.find_element_by_name("apply_coupon").click()
+message_coupon = driver.find_element_by_class_name("woocommerce-error")
+print(message_coupon.text)
+assert message_coupon.text == "The minimum spend for this coupon is ₹450.00."
+logout()
+
+
+
 print("Успешно")
 driver.quit()
 
