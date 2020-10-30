@@ -67,8 +67,8 @@ def basket_container_clean(): #очистка корзины
                
     Shop = driver.find_element_by_id("menu-item-40").click()
 
-
-#4.Shop: отображение страницы товара. shop >HTML5 Forms'''
+'''
+#4.Shop: отображение страницы товара. shop >HTML5 Forms
 print("#4.Shop: отображение страницы товара. shop >HTML5 Forms")
 login()
 #basket_container_clean()
@@ -472,7 +472,7 @@ assert coupon_admit_text == "-₹50.00, Free shipping coupon [Remove]"
 logout()
 
  
-#20 branch shop15  Home-Arrivals-Add to Basket-Items-Coupon value<450 '''                  
+#20 branch shop15  Home-Arrivals-Add to Basket-Items-Coupon value<450                  
 print("#20. Home-Arrivals-Add to Basket-Items-Coupon value<450 : добавть книгу, стоимость которой меньше 450р.  ")
 login()
 basket_container_clean()#очистка корзины
@@ -502,9 +502,32 @@ print(message_coupon.text)
 assert message_coupon.text == "The minimum spend for this coupon is ₹450.00."
 logout()
 
+''' 
+#21 branch shop16   Home-Arrivals-Add to Basket-Items-Remove book            
+print("#21 Home-Arrivals-Add to Basket-Items-Remove book  ")
+login()
+basket_container_clean()#очистка корзины
+home = driver.find_element_by_xpath("//a[text()='Home']").click()
+new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
+if len(new_arrivals) == 3:
+    print("the Home page has Three Arrivals")
+else:
+    print("ops")
+each_arrivel = driver. find_element_by_xpath("//img[@alt='Mastering JavaScript']").click()
+add_button_is_here = driver.find_element_by_class_name("single_add_to_cart_button")
+add_button_is_here_wait = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.CLASS_NAME,"single_add_to_cart_button")))
+assert add_button_is_here!= None, "'Add book' is not clickable"
 
+print("The image in the Arrivals is navigating to next page where the user can add that book into his basket")
+Add_to_basket = driver.find_element_by_class_name("single_add_to_cart_button.button.alt").click()
 
+count_item_text = basket_container()
+assert count_item_text != "0 Items"
+basket = driver.find_element_by_id("wpmenucartli").click()                                         
+driver.find_element_by_css_selector("td.product-remove > a").click() # удаляем item с помощью метода click
+remote = driver.find_element_by_class_name("woocommerce-message").text
+assert remote == "Mastering JavaScript removed. Undo?"
 print("Успешно")
-driver.quit()
+#driver.quit()
 
 
