@@ -67,8 +67,8 @@ def basket_container_clean(): #очистка корзины
                
     Shop = driver.find_element_by_id("menu-item-40").click()
 
-
-#4.Shop: отображение страницы товара. shop >HTML5 Forms'''
+'''
+#4.Shop: отображение страницы товара. shop >HTML5 Forms
 print("#4.Shop: отображение страницы товара. shop >HTML5 Forms")
 login()
 #basket_container_clean()
@@ -565,7 +565,7 @@ logout()
 
 
 
-#23 branch shop18    Home-Arrivals-Add to Basket-Items-Check-out-Book Final price '''     
+#23 branch shop18    Home-Arrivals-Add to Basket-Items-Check-out-Book Final price      
 print("#23 Home-Arrivals-Add to Basket-Items-Check-out-Book Final price")
 login()
 basket_container_clean()#очистка корзины
@@ -606,7 +606,7 @@ Total_float = float(re.sub(pattern,"",Total))
 assert Total_float == Tax_float + subtotal_float, t_summ
 print("Общая сумма подсчитана верно")
 logout()
-
+'''
 print("Успешно")
 driver.quit()
 
