@@ -527,8 +527,9 @@ basket = driver.find_element_by_id("wpmenucartli").click()
 driver.find_element_by_css_selector("td.product-remove > a").click() # удаляем item с помощью метода click
 remote = driver.find_element_by_class_name("woocommerce-message").text
 assert remote == "Mastering JavaScript removed. Undo?"
+logout()
 
-#22 branch shop17   Home-Arrivals-Add to Basket-Items-Add book ''' 
+#22 branch shop17   Home-Arrivals-Add to Basket-Items-Add book 
 print("#22  Home-Arrivals-Add to Basket-Items-Add book")
 login()
 basket_container_clean()#очистка корзины
@@ -560,6 +561,51 @@ UPDATE_BASKET = driver.find_element_by_name("update_cart").click()
 update_message = driver.find_element_by_class_name("woocommerce-message").text
 assert update_message == "Basket updated."
 print("Basket updated.")
+logout()
+
+
+
+#23 branch shop18    Home-Arrivals-Add to Basket-Items-Check-out-Book Final price '''     
+print("#23 Home-Arrivals-Add to Basket-Items-Check-out-Book Final price")
+login()
+basket_container_clean()#очистка корзины
+home = driver.find_element_by_xpath("//a[text()='Home']").click()
+new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
+if len(new_arrivals) == 3:
+    print("the Home page has Three Arrivals")
+else:
+    print("ops")
+each_arrivel = driver. find_element_by_xpath("//img[@alt='Mastering JavaScript']").click()
+add_button_is_here = driver.find_element_by_class_name("single_add_to_cart_button")
+add_button_is_here_wait = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.CLASS_NAME,"single_add_to_cart_button")))
+assert add_button_is_here!= None, "'Add book' is not clickable"
+
+print("The image in the Arrivals is navigating to next page where the user can add that book into his basket")
+Add_to_basket = driver.find_element_by_class_name("single_add_to_cart_button.button.alt").click()
+
+count_item_text = basket_container()
+assert count_item_text != "0 Items"
+basket = driver.find_element_by_id("wpmenucartli").click()
+
+
+subtotal_row = driver.find_element_by_class_name("cart-subtotal")
+subtotal = subtotal_row .find_element_by_class_name("woocommerce-Price-amount.amount").text
+
+Tax_row = driver.find_element_by_class_name("tax-rate.tax-rate-roaming-tax-1")
+Tax = Tax_row.find_element_by_class_name("woocommerce-Price-amount.amount").text
+
+Total_row = driver.find_element_by_class_name("order-total")
+Total = Total_row.find_element_by_class_name("woocommerce-Price-amount.amount").text
+
+import re
+pattern = r"₹"
+subtotal_float = float(re.sub(pattern,"",subtotal))
+Tax_float = float(re.sub(pattern,"",Tax))
+Total_float = float(re.sub(pattern,"",Total))
+
+assert Total_float == Tax_float + subtotal_float, t_summ
+print("Общая сумма подсчитана верно")
+logout()
 
 print("Успешно")
 driver.quit()
