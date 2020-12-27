@@ -1,4 +1,10 @@
+
+
 #1. подключение webdriver
+from selenium import webdriver
+#from webdriver_manager.chrome import ChromeDriverManager
+
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -13,6 +19,7 @@ import urllib3
 
 #2. открытие ресурса
 driver = webdriver.Chrome() 
+#driver = webdriver.Chrome(ChromeDriverManager().install())
 #driver.maximize_window()
 driver.get("http://practice.automationtesting.in")
 driver.implicitly_wait(20)
@@ -67,7 +74,7 @@ def basket_container_clean(): #очистка корзины
                
     Shop = driver.find_element_by_id("menu-item-40").click()
 
-'''
+
 #4.Shop: отображение страницы товара. shop >HTML5 Forms
 print("#4.Shop: отображение страницы товара. shop >HTML5 Forms")
 login()
@@ -192,14 +199,14 @@ add_book_HTML5_WebApp_Development = driver.find_element_by_css_selector('li.post
 add_book_JS_Data_Structures_and_Algorithm= driver.find_element_by_css_selector('li.post-180>:nth-child(2)').click()
 time.sleep(20)
 basket = driver.find_element_by_id("wpmenucartli").click()
-
+time.sleep(20)
 del_first_item = driver.find_element_by_css_selector("tbody > tr:nth-child(1) > td.product-remove > a").click()
 
 driver.find_element_by_xpath("//a[text()='Undo?']").click()
 quantity = driver.find_element_by_css_selector("form > table > tbody > tr:nth-child(1) > td.product-quantity > div > input").clear()
 quantity = driver.find_element_by_css_selector("form > table > tbody > tr:nth-child(1) > td.product-quantity > div > input").send_keys(3)
 
-#time.sleep(40)
+time.sleep(40)
 UPDATE_BASKET_wait =  WebDriverWait(driver, 40).until(EC.element_to_be_clickable((By.NAME, "update_cart")))
 
 print("UPDATE_BASKET")
@@ -606,8 +613,142 @@ Total_float = float(re.sub(pattern,"",Total))
 assert Total_float == Tax_float + subtotal_float, t_summ
 print("Общая сумма подсчитана верно")
 logout()
-'''
+
+
+#24 branch shop19   Home-Arrivals-Add to Basket-Items-Check-out functionality  '''               
+print("#24 Home-Arrivals-Add to Basket-Items-Check-out functionality ")
+#login()
+basket_container_clean()#очистка корзины
+home = driver.find_element_by_xpath("//a[text()='Home']").click()
+new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
+if len(new_arrivals) == 3:
+    print("the Home page has Three Arrivals")
+else:
+    print("ops")
+each_arrivel = driver. find_element_by_xpath("//img[@alt='Mastering JavaScript']").click()
+add_button_is_here = driver.find_element_by_class_name("single_add_to_cart_button")
+add_button_is_here_wait = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.CLASS_NAME,"single_add_to_cart_button")))
+assert add_button_is_here!= None, "'Add book' is not clickable"
+
+print("The image in the Arrivals is navigating to next page where the user can add that book into his basket")
+Add_to_basket = driver.find_element_by_class_name("single_add_to_cart_button.button.alt").click()
+count_item_text = basket_container()
+assert count_item_text != "0 Items"
+basket = driver.find_element_by_id("wpmenucartli").click()
+subtotal_row = driver.find_element_by_class_name("cart-subtotal")
+subtotal = subtotal_row .find_element_by_class_name("woocommerce-Price-amount.amount").text
+
+Tax_row = driver.find_element_by_class_name("tax-rate.tax-rate-roaming-tax-1")
+Tax = Tax_row.find_element_by_class_name("woocommerce-Price-amount.amount").text
+
+Total_row = driver.find_element_by_class_name("order-total")
+Total = Total_row.find_element_by_class_name("woocommerce-Price-amount.amount").text
+
+import re
+pattern = r"₹"
+subtotal_float = float(re.sub(pattern,"",subtotal))
+Tax_float = float(re.sub(pattern,"",Tax))
+Total_float = float(re.sub(pattern,"",Total))
+
+assert (Total_float - Tax_float - subtotal_float) < 1 , t_summ
+print("Общая сумма подсчитана верно")
+
+
+ProceedtoCheckout = driver.find_element_by_class_name("wc-forward").click()
+current_page = driver.current_url
+assert current_page == "http://practice.automationtesting.in/checkout/"
+print(current_page)
+
+#logout()
+
+#25 branch shop20   Home-Arrivals-Add to Basket-Items-Check-out-Payment Gateway                   
+print("#25 Home-Arrivals-Add to Basket-Items-Check-out-Payment Gateway Проверка выводит результат для  PayPal Express Checkout")
+#Now user can fill his details in billing details form 
+#and can opt any payment in the payment gateway like
+# Direct bank transfer,cheque,cash or paypal.
+
+
+# модуль обработки исключений  наличия элемента на странице
+Billing_Details_by_xpath = "//h3[text()='Billing Details']"
+from selenium.common.exceptions import NoSuchElementException  
+    
+def check_exists_by_xpath(xpath):
+    try:
+        driver.find_element_by_xpath(xpath)
+    except NoSuchElementException:
+        return False
+    return True
+check_exists_by_xpath(Billing_Details_by_xpath) # 
+billing_info = {
+"billing_first_name":"Томм",
+"billing_last_name":"Reddle",
+"billing_email":"Tomm@lm.com",
+"billing_phone":"891196587",
+"select2-input":"Russia",
+"billing_address_1":"Street First",
+"billing_city":"Town",
+"billing_state":"State",
+"billing_postcode":"125478",
+
+}
+
+billing_first_name = driver. find_element_by_id( "billing_first_name").send_keys("Томм")
+billing_last_name = driver. find_element_by_id( "billing_last_name").send_keys("Reddle")
+billing_email  = driver. find_element_by_id("billing_email").send_keys("Tomm@lm.com")
+billing_phone  = driver. find_element_by_id("billing_phone").send_keys("891196587")
+Country = driver. find_element_by_id("select2-chosen-1").click()
+search_country = driver.find_element_by_class_name("select2-input").send_keys("Russia")
+billing_address_1 = driver. find_element_by_id("billing_address_1").send_keys("Street First")
+billing_city = driver. find_element_by_id("billing_city").send_keys("Town")
+billing_state = driver. find_element_by_id("billing_state").send_keys("State")
+billing_postcode  = driver. find_element_by_id("billing_postcode").send_keys("125478")
+
+#driver.execute_script("return arguments[0].scrollIntoViwe(true);",payment_method_bacs)
+driver.execute_script("window.scrollBy(0,400);")
+
+driver.find_element_by_class_name("select2-drop-mask").click()
+
+Check_Payments = driver.find_element_by_id("payment_method_cheque")
+Check_Payments.click()
+
+payment_method_cod = driver.find_element_by_id("payment_method_cod")
+payment_method_cod.click()
+
+payment_method_ppec_paypal = driver.find_element_by_id("payment_method_ppec_paypal")
+payment_method_ppec_paypal.click()
+
+
+payment_method_ppec_paypal_attr = payment_method_ppec_paypal.get_attribute("checked")
+print(payment_method_ppec_paypal_attr)
+
+assert payment_method_ppec_paypal_attr == "true"
+payment_method_cod_attr = payment_method_cod.get_attribute("checked")
+
+Check_Payments_attr = Check_Payments.get_attribute("checked")
+
+choise_paypal = False
+choise_cod= False
+choise_Pay= False
+if payment_method_ppec_paypal_attr == "true":
+    choise_paypal = True
+if payment_method_cod_attr == "true":
+    choise_cod = True
+if Check_Payments_attr == "true":
+    choise_Pay = True
+
+place_order = driver.find_element_by_id("place_order").click()
+
+if choise_paypal == True:
+    error = driver.find_element_by_class_name("woocommerce-error") .text
+    assert "Payment error:" in error
+    print("Этот метод оплаты требует дополнительных телодвижений")
+
+# woocommerce-thankyou-order-received
+
 print("Успешно")
-driver.quit()
+
+
+
+#driver.quit()
 
 
