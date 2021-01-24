@@ -1,7 +1,7 @@
-#подключение webdriver
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 
+
+#1. подключение webdriver
+from selenium import webdriver
 #from webdriver_manager.chrome import ChromeDriverManager
 
 
@@ -16,22 +16,18 @@ import time
 import requests
 import urllib3
 
-options = Options()
-#options.add_argument('--no-sandbox')
 
 #2. открытие ресурса
-driver = webdriver.Chrome(executable_path="E:\\bin\\chromedriver.exe") 
-
+driver = webdriver.Chrome() 
 #driver = webdriver.Chrome(ChromeDriverManager().install())
 #driver.maximize_window()
 driver.get("http://practice.automationtesting.in")
-driver.implicitly_wait(30)
+driver.implicitly_wait(20)
 wait = WebDriverWait(driver, 20) 
 
 #3. вспомогательные функции
 
 def login():# login
-    
     driver.get("http://practice.automationtesting.in")
     my_account = driver.find_element_by_id("menu-item-50").click()
     user_login_email = driver.find_element_by_id("username").send_keys("zoya@km.ru")
@@ -96,9 +92,7 @@ logout()
 
 #5. Shop: количество товаров в категории
 print("#5. Shop: количество товаров в категории")
-time.sleep(20)
 login()
-#time.sleep(20)
 basket_container_clean()
 category_HTML = driver.find_element_by_css_selector("li.cat-item.cat-item-19 > a").click()
 category_HTML_list = driver.find_elements(By.CLASS_NAME, "has-post-author")
@@ -111,9 +105,8 @@ logout()
 
 #6. Shop: сортировка товаров
 print("#6. Shop: сортировка товаров")
-#time.sleep(20)
 login()
-basket_container_clean()
+#basket_container_clean()
 def choice():
     if sort =="price-desc":
         print("Выбран вариант сортировки от большего к меньшему")
@@ -125,23 +118,17 @@ sort = Selector.get_attribute("value")
 choice()
 sort_choise = Select(Selector)
 sort_choise.select_by_value("price-desc")
-time.sleep(20)
 Selector = driver.find_element_by_name("orderby")
 sort = Selector.get_attribute("value")
 choice()
 logout()
-#time.sleep(20)
 
 #7. Shop: отображение, скидка товара
 print("#7. Shop: отображение, скидка товара") 
 login()
-time.sleep(20)
 basket_container_clean()
 book_Android_Quick_Start_Guide = driver.find_element_by_xpath("//h3[text()='Android Quick Start Guide']").click()
-#print(book_Android_Quick_Start_Guide.text)
-#book_Android_Quick_Start_Guide
-time.sleep(30)
-previous_price = driver.find_element_by_class_name("woocommerce-Price-amount.amount")
+previous_price = driver.find_element_by_css_selector("div:nth-child(2) > p > del > span")
 previous_price_get_text = previous_price.text
 
 assert previous_price_get_text == "₹600.00"
@@ -149,82 +136,55 @@ if previous_price_get_text == "₹600.00":
     print('содержимое старой цены = "₹600.00"')
 else:
     print("ops")
-time.sleep(30)
-#now_price = driver.find_element_by_xpath('//*[@id="content"]/ul/li[1]/a[1]/span[2]/ins')
-now_price = driver.find_element_by_xpath('//*[@id="product-169"]/div[2]/div[1]/p/ins/span')
+
+now_price = driver.find_element_by_css_selector("div:nth-child(2) > p > ins > span")
 now_price_get_text = now_price.text
-print(now_price_get_text)
+
 assert now_price_get_text == "₹450.00"
 if now_price_get_text == "₹450.00":
     print('содержимое старой цены = "₹450.00"')
 else:
     print("ops")
-logout()
+
 #8. Добавьте явное ожидание и нажмите на обложку книги
 print("#8. Добавьте явное ожидание и нажмите на обложку книги")
-login()
-#time.sleep(20)
-book_Selenium_Ruby = driver.find_element_by_xpath("//h3[text()='Selenium Ruby']")
-print(book_Selenium_Ruby.text)
-book_Selenium_Ruby.click()
-
-img_cover = WebDriverWait(driver, 2).until(EC.presence_of_element_located(
+img_cover = WebDriverWait(driver, 5).until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, ".wp-post-image")))
-
-cover_book = driver.find_element_by_class_name("attachment-shop_single").click()
-
-
+cover_book = driver.find_element_by_class_name("wp-post-image").click()
  
-close_button_wait = WebDriverWait(driver, 1).until(EC.presence_of_element_located(
-            (By.CLASS_NAME, "pp_close")))
-
+cower_book_wait = WebDriverWait(driver, 1).until(EC.presence_of_element_located(
+            (By.ID, "fullResImage")))
+close_button_wait = WebDriverWait(driver, 2).until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, ".pp_details > a")))
 close_click = driver.find_element_by_css_selector(".pp_details > a").click()
 
-
 logout()
+
 #9. Shop: проверка цены в корзине
 print("#9. Shop: проверка цены в корзине")
 login()
 
 basket_container_clean()#очистка корзины
 time.sleep(20)
+book_HTML5_WebApp_Development = driver.find_element_by_xpath("//h3[text()='HTML5 WebApp Develpment']").click()
+add_book = driver.find_element_by_css_selector("div.summary.entry-summary > form > button").click()
+time.sleep(20)
+basket = driver.find_element_by_id("wpmenucartli")
+count_item = driver.find_element_by_css_selector("span.cartcontents")
+count_amount = driver.find_element_by_css_selector("span.amount")
+count_item_text = count_item.text
+count_amount_text = count_amount.text
 
 
-try:
-    print("try")
-    book_HTML5_WebApp_Development = driver.find_element_by_xpath("//h3[text()='HTML5 WebApp Develpment']").click()
-    add_book = driver.find_element_by_css_selector("div.summary.entry-summary > form > button")
+assert count_item_text == "1 Item"
+assert count_amount_text == "₹180.00"
 
+basket = driver.find_element_by_id("wpmenucartli").click() #обновляем поиск корзины
 
-    time.sleep(20)
-    basket = driver.find_element_by_id("wpmenucartli")
-    count_item = driver.find_element_by_css_selector("span.cartcontents")
-    count_amount = driver.find_element_by_css_selector("span.amount")
-    count_item_text = count_item.text
-    count_amount_text = count_amount.text
+subtotal_price_wait= WebDriverWait(driver, 3).until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, "tr.cart-subtotal > td > span")))
+total_price_wait= WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "tr.order-total > td >strong> span")))
 
-
-    assert count_item_text == "1 Item"
-    assert count_amount_text == "₹180.00"
-
-    basket = driver.find_element_by_id("wpmenucartli").click() #обновляем поиск корзины
-
-    subtotal_price_wait= WebDriverWait(driver, 3).until(EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "tr.cart-subtotal > td > span")))
-    total_price_wait= WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "tr.order-total > td >strong> span")))
-except:
-    #В этой позиции нет возможности добавления в корзину
-    print("'HTML5 WebApp Develpment' Недоступно для заказа")
-    shop = driver.find_element_by_id("menu-item-40").click()
-    add_book = driver.find_element_by_xpath("//a[text()='Add to basket']").click()
-    basket = driver.find_element_by_id("wpmenucartli")
-    count_item = driver.find_element_by_xpath("//a[@class = 'wpmenucart-contents']/span[1]")
-    count_amount = driver.find_element_by_xpath("//a[@class = 'wpmenucart-contents']/span[2]")
-    count_item_text = count_item.text
-    
-    count_amount_text = count_amount.text
-    assert count_item_text == "1 Item"
-    assert count_amount_text == "₹280.00"
 
 logout()
 
@@ -235,8 +195,8 @@ basket_container_clean()#очистка корзины
 
 driver.execute_script("window.scrollBy(0,300);")
 
-add_book_HTML5_Forms = driver.find_element_by_xpath("//h3[text()='HTML5 Forms']").click()
-add_book_JS_Data_Structures_and_Algorithm= driver.find_element_by_class_name('single_add_to_cart_button.button.alt').click()
+add_book_HTML5_WebApp_Development = driver.find_element_by_css_selector('li.post-182>:nth-child(2)').click()
+add_book_JS_Data_Structures_and_Algorithm= driver.find_element_by_css_selector('li.post-180>:nth-child(2)').click()
 time.sleep(20)
 basket = driver.find_element_by_id("wpmenucartli").click()
 time.sleep(20)
@@ -273,12 +233,11 @@ print('#11. Shop: покупка товара')
 driver.get("http://practice.automationtesting.in")
 Shop = driver.find_element_by_id("menu-item-40").click()
 driver.execute_script("window.scrollBy(0,300);")
-book_HTML_V = driver.find_element_by_xpath("//h3[text()='HTML5 Forms']").click()
-add_book_HTML_V = driver.find_element_by_class_name("single_add_to_cart_button.button.alt").click()
-#basket_wait = WebDriverWait(driver, 50).until(EC.element_to_be_clickable((By.ID,"wpmenucartli")))
+add_book_HTML5_WebApp_Development = driver.find_element_by_css_selector('li.post-182>:nth-child(2)').click()
+basket_wait = WebDriverWait(driver, 50).until(EC.element_to_be_clickable((By.ID,"wpmenucartli")))
 basket = driver.find_element_by_id("wpmenucartli").click()
-time.sleep(50)
-#checkout_wait = WebDriverWait(driver, 70).until(EC.element_to_be_clickable((By.CLASS_NAME,"wc-forward")))
+
+checkout_wait = WebDriverWait(driver, 50).until(EC.element_to_be_clickable((By.CLASS_NAME,"wc-forward")))
 checkout = driver.find_element_by_class_name("wc-forward").click()
 
 
@@ -355,7 +314,6 @@ logout()
 
 #14 branch shop9 3.Home page - Images in Arrivals should navigate 
 print("#14. Images in Arrivals should navigate ")
-time.sleep(50)
 login()
 basket_container_clean()#очистка корзины
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
@@ -481,11 +439,9 @@ print("Значение превышающее допустимое",in_stock_co
 counter_add_book = driver.find_element_by_class_name("input-text.qty.text")
 counter_add_book.clear()
 counter_add_book_chenge = driver.find_element_by_class_name("input-text.qty.text").send_keys(in_stock_count)
-assert_text = "Значение должно быть меньше или равно "+str(in_stock_count-1)+"."
-validationMessage = counter_add_book.get_attribute("validationMessage")
-#print(assert_text)
-#print("сообщение", validationMessage)
-assert validationMessage == assert_text
+
+validationMessage = counter_add_book.get_attribute("validationMessage");
+assert validationMessage == "Значение должно быть меньше или равно 494."
 
 
 print("Предупреждение",validationMessage)
@@ -493,7 +449,6 @@ logout()
 
 #19 branch shop14 Home-Arrivals-Add to Basket-Items-Coupon             
 print("#19. Home-Arrivals-Add to Basket-Items-Coupon   ")
-
 login()
 basket_container_clean()#очистка корзины
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
@@ -523,11 +478,11 @@ print("Применена скидка", coupon_admit_text)
 assert coupon_admit_text == "-₹50.00, Free shipping coupon [Remove]"
 logout()
 
-
+ 
 #20 branch shop15  Home-Arrivals-Add to Basket-Items-Coupon value<450                  
 print("#20. Home-Arrivals-Add to Basket-Items-Coupon value<450 : добавть книгу, стоимость которой меньше 450р.  ")
 login()
-basket_container_clean() #очистка корзины
+basket_container_clean()#очистка корзины
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
 new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
 if len(new_arrivals) == 3:
@@ -560,7 +515,6 @@ print("#21 Home-Arrivals-Add to Basket-Items-Remove book  ")
 login()
 basket_container_clean()#очистка корзины
 home = driver.find_element_by_xpath("//a[text()='Home']").click()
-
 new_arrivals = driver.find_elements(By.CLASS_NAME, "products")
 if len(new_arrivals) == 3:
     print("the Home page has Three Arrivals")
@@ -661,7 +615,7 @@ print("Общая сумма подсчитана верно")
 logout()
 
 
-#24 branch shop19   Home-Arrivals-Add to Basket-Items-Check-out functionality               
+#24 branch shop19   Home-Arrivals-Add to Basket-Items-Check-out functionality  '''               
 print("#24 Home-Arrivals-Add to Basket-Items-Check-out functionality ")
 #login()
 basket_container_clean()#очистка корзины
@@ -746,16 +700,13 @@ Country = driver. find_element_by_id("select2-chosen-1").click()
 search_country = driver.find_element_by_class_name("select2-input").send_keys("Russia")
 billing_address_1 = driver. find_element_by_id("billing_address_1").send_keys("Street First")
 billing_city = driver. find_element_by_id("billing_city").send_keys("Town")
-time.sleep(20)
-billing_state = driver.find_element_by_id("select2-drop-mask").click()
-billing_state1 = driver.find_element_by_xpath("//*[@id='billing_state']").send_keys("State")
-time.sleep(20)
+billing_state = driver. find_element_by_id("billing_state").send_keys("State")
 billing_postcode  = driver. find_element_by_id("billing_postcode").send_keys("125478")
 
 #driver.execute_script("return arguments[0].scrollIntoViwe(true);",payment_method_bacs)
 driver.execute_script("window.scrollBy(0,400);")
 
-#driver.find_element_by_class_name("select2-drop-mask").click()
+driver.find_element_by_class_name("select2-drop-mask").click()
 
 Check_Payments = driver.find_element_by_id("payment_method_cheque")
 Check_Payments.click()
@@ -784,12 +735,11 @@ if payment_method_cod_attr == "true":
     choise_cod = True
 if Check_Payments_attr == "true":
     choise_Pay = True
-time.sleep(20)
+
 place_order = driver.find_element_by_id("place_order").click()
-time.sleep(20)
+
 if choise_paypal == True:
     error = driver.find_element_by_class_name("woocommerce-error") .text
-    print(error)
     assert "Payment error:" in error
     print("Этот метод оплаты требует дополнительных телодвижений")
 
@@ -799,5 +749,6 @@ print("Успешно")
 
 
 
-driver.quit()
- 
+#driver.quit()
+
+
